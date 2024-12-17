@@ -9,12 +9,11 @@ pygame.init()
 # Set up the screen
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Circular Particle Effect")
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)  # Enable transparency
+pygame.display.set_caption("Pulsing Circular Particle Effect")
 
-# Colours
-BACKGROUND_COLOR = (0, 0, 0)  # Black background
-PARTICLE_COLOR = (0, 255, 255)  # Deep Blue-Green particles
+# Particle colour
+PARTICLE_COLOR = (42, 32, 135, 255)  # Purple-blue particles with full opacity (RGBA)
 
 # Particle properties
 NUM_PARTICLES = 200  # Number of particles
@@ -23,31 +22,37 @@ particles = []
 # Center of the circle
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_HEIGHT // 2
-RADIUS = 200  # Radius of the particle circle
+BASE_RADIUS = 200  # Base radius of the circle
+PULSE_SPEED = 0.01  # Speed of the pulsing effect
+pulse_offset = 0  # Tracks the current pulse offset
 
 # Function to create particles in a circular formation
 def create_particles():
     for _ in range(NUM_PARTICLES):
         angle = random.uniform(0, 2 * math.pi)  # Random angle around the circle
-        distance = RADIUS + random.uniform(-10, 10)  # Slight variation in radius
-        x = CENTER_X + distance * math.cos(angle)
-        y = CENTER_Y + distance * math.sin(angle)
-        speed_x = random.uniform(-0.5, 0.5)  # Tiny horizontal movement
-        speed_y = random.uniform(-0.5, 0.5)  # Tiny vertical movement
+        distance = BASE_RADIUS + random.uniform(-10, 10)  # Slight variation in radius
         size = random.randint(2, 4)  # Particle size
-        particles.append([x, y, speed_x, speed_y, size, angle, distance])
+        speed = random.uniform(-0.1, 0.1)  # Slower movement
+        particles.append([angle, distance, size, speed])
 
 # Function to update and draw particles
 def update_and_draw_particles():
+    global pulse_offset
+    pulse_offset += PULSE_SPEED
+
+    # Calculate the current pulsing radius
+    pulse_radius = BASE_RADIUS + 20 * math.sin(pulse_offset)
+
     for particle in particles:
-        # Update particle position slightly around its original angle and distance
-        particle[5] += random.uniform(-0.01, 0.01)  # Slight wobble in angle
-        particle[6] += random.uniform(-0.2, 0.2)  # Slight wobble in distance
-        particle[0] = CENTER_X + particle[6] * math.cos(particle[5]) + particle[2]  # x
-        particle[1] = CENTER_Y + particle[6] * math.sin(particle[5]) + particle[3]  # y
+        # Slightly adjust particle's angle for slow movement
+        particle[0] += particle[3]
+
+        # Calculate particle's position based on pulsing radius
+        x = CENTER_X + (pulse_radius + random.uniform(-5, 5)) * math.cos(particle[0])
+        y = CENTER_Y + (pulse_radius + random.uniform(-5, 5)) * math.sin(particle[0])
 
         # Draw particle
-        pygame.draw.circle(screen, PARTICLE_COLOR, (int(particle[0]), int(particle[1])), particle[4])
+        pygame.draw.circle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
 
 # Main loop
 def main():
@@ -61,8 +66,7 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        # Clear screen
-        screen.fill(BACKGROUND_COLOR)
+        # **Do not clear the screen** - Particles build on top of each other
 
         # Update and draw particles
         update_and_draw_particles()
