@@ -6,17 +6,17 @@ import sys
 # Initialize Pygame
 pygame.init()
 
-# Set up the screen
+# Set up the screen with transparency
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)  # Enable transparency
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 pygame.display.set_caption("Pulsing Circular Particle Effect")
 
 # Particle colour
-PARTICLE_COLOR = (42, 32, 135, 255)  # Purple-blue particles with full opacity (RGBA)
+PARTICLE_COLOR = (42, 32, 135, 255)  # Deep purple-blue particles (RGBA)
 
 # Particle properties
-NUM_PARTICLES = 200  # Number of particles
+NUM_PARTICLES = 200
 particles = []
 
 # Center of the circle
@@ -32,7 +32,7 @@ def create_particles():
         angle = random.uniform(0, 2 * math.pi)  # Random angle around the circle
         distance = BASE_RADIUS + random.uniform(-10, 10)  # Slight variation in radius
         size = random.randint(2, 4)  # Particle size
-        speed = random.uniform(-0.1, 0.1)  # Slower movement
+        speed = random.uniform(-0.02, 0.02)  # Very slow movement
         particles.append([angle, distance, size, speed])
 
 # Function to update and draw particles
@@ -43,8 +43,9 @@ def update_and_draw_particles():
     # Calculate the current pulsing radius
     pulse_radius = BASE_RADIUS + 20 * math.sin(pulse_offset)
 
+    # Redraw the particles
     for particle in particles:
-        # Slightly adjust particle's angle for slow movement
+        # Slightly adjust particle's angle for smooth movement
         particle[0] += particle[3]
 
         # Calculate particle's position based on pulsing radius
@@ -53,6 +54,11 @@ def update_and_draw_particles():
 
         # Draw particle
         pygame.draw.circle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
+
+    # Clear the surface by drawing a transparent rectangle (erases old frames without a visible background)
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 10))  # Slight opacity to "fade" previous particles
+    screen.blit(overlay, (0, 0))
 
 # Main loop
 def main():
@@ -65,8 +71,6 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-        # **Do not clear the screen** - Particles build on top of each other
 
         # Update and draw particles
         update_and_draw_particles()
