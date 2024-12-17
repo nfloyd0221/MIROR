@@ -16,7 +16,7 @@ pygame.display.set_caption("Pulsing Circular Particle Effect")
 PARTICLE_COLOR = (42, 32, 135, 255)  # Deep purple-blue particles (RGBA)
 
 # Particle properties
-NUM_PARTICLES = 200
+NUM_PARTICLES = 100  # Half the previous number
 particles = []
 
 # Center of the circle
@@ -31,8 +31,8 @@ def create_particles():
     for _ in range(NUM_PARTICLES):
         angle = random.uniform(0, 2 * math.pi)  # Random angle around the circle
         distance = BASE_RADIUS + random.uniform(-10, 10)  # Slight variation in radius
-        size = random.randint(2, 4)  # Particle size
-        speed = random.uniform(-0.02, 0.02)  # Very slow movement
+        size = random.randint(5, 8)  # Larger particle size for better resolution
+        speed = random.uniform(-0.01, 0.01)  # Very slow movement
         particles.append([angle, distance, size, speed])
 
 # Function to update and draw particles
