@@ -6,10 +6,12 @@ import sys
 # Initialize Pygame
 pygame.init()
 
-# Set up the screen (transparent background for overlaying on the Magic Mirror display)
+# Set up the screen with transparency (borderless window)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)  # SRCALPHA for transparency
+
+# Remove border and window decorations by using pygame.NOFRAME
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA | pygame.NOFRAME)
 pygame.display.set_caption("Pulsing Circular Particle Effect")
 
 # Particle colour
