@@ -18,7 +18,7 @@ pygame.display.set_caption("Pulsing Circular Particle Effect")
 PARTICLE_COLOR = (42, 32, 135)  # Deep purple-blue particles (RGBA without alpha)
 
 # Particle properties
-NUM_PARTICLES = 100  # Number of particles
+NUM_PARTICLES = 50  # Number of particles
 particles = []
 
 # Center of the circle
@@ -56,11 +56,11 @@ def update_and_draw_particles():
     # Redraw the particles
     for particle in particles:
         # Slightly adjust particle's angle for smooth movement
-        particle[0] += particle[3]
+        particle[0] += particle[3]  # Adjust angle based on speed
 
         # Calculate particle's position based on pulsing radius
-        x = CENTER_X + (pulse_radius + random.uniform(-5, 5)) * math.cos(particle[0])
-        y = CENTER_Y + (pulse_radius + random.uniform(-5, 5)) * math.sin(particle[0])
+        x = CENTER_X + pulse_radius * math.cos(particle[0])
+        y = CENTER_Y + pulse_radius * math.sin(particle[0])
 
         # Draw the smooth particle on top of the existing screen content
         draw_smooth_particle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
