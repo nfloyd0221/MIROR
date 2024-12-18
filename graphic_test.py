@@ -13,10 +13,10 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 pygame.display.set_caption("Pulsing Circular Particle Effect")
 
 # Particle colour
-PARTICLE_COLOR = (42, 32, 135, 255)  # Deep purple-blue particles (RGBA)
+PARTICLE_COLOR = (42, 32, 135)  # Deep purple-blue particles (RGBA without alpha)
 
 # Particle properties
-NUM_PARTICLES = 100  # Half the previous number
+NUM_PARTICLES = 100  # Number of particles
 particles = []
 
 # Center of the circle
@@ -31,9 +31,17 @@ def create_particles():
     for _ in range(NUM_PARTICLES):
         angle = random.uniform(0, 2 * math.pi)  # Random angle around the circle
         distance = BASE_RADIUS + random.uniform(-10, 10)  # Slight variation in radius
-        size = random.randint(5, 8)  # Larger particle size for better resolution
+        size = random.randint(5, 8)  # Particle size for better resolution
         speed = random.uniform(-0.01, 0.01)  # Very slow movement
         particles.append([angle, distance, size, speed])
+
+# Function to create a smoother particle (anti-aliased)
+def draw_smooth_particle(surface, color, pos, size):
+    # Create a temporary surface with alpha (transparency) for smooth edges
+    particle_surface = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
+    pygame.draw.circle(particle_surface, color + (255,), (size, size), size)
+    # Blit the smooth particle onto the main screen
+    surface.blit(particle_surface, (pos[0] - size, pos[1] - size), special_flags=pygame.BLEND_RGBA_ADD)
 
 # Function to update and draw particles
 def update_and_draw_particles():
@@ -52,8 +60,8 @@ def update_and_draw_particles():
         x = CENTER_X + (pulse_radius + random.uniform(-5, 5)) * math.cos(particle[0])
         y = CENTER_Y + (pulse_radius + random.uniform(-5, 5)) * math.sin(particle[0])
 
-        # Draw particle
-        pygame.draw.circle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
+        # Draw the smooth particle
+        draw_smooth_particle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
 
     # Clear the surface by drawing a transparent rectangle (erases old frames without a visible background)
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
