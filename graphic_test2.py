@@ -6,11 +6,9 @@ import sys
 # Initialize Pygame
 pygame.init()
 
-# Set up the screen with transparency (borderless window)
+# Set up the screen with transparency and no frame
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-
-# Remove border and window decorations by using pygame.NOFRAME
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA | pygame.NOFRAME)
 pygame.display.set_caption("Pulsing Circular Particle Effect")
 
@@ -18,7 +16,7 @@ pygame.display.set_caption("Pulsing Circular Particle Effect")
 PARTICLE_COLOR = (42, 32, 135)  # Deep purple-blue particles (RGBA without alpha)
 
 # Particle properties
-NUM_PARTICLES = 50  # Number of particles
+NUM_PARTICLES = 100  # Number of particles
 particles = []
 
 # Center of the circle
@@ -56,14 +54,19 @@ def update_and_draw_particles():
     # Redraw the particles
     for particle in particles:
         # Slightly adjust particle's angle for smooth movement
-        particle[0] += particle[3]  # Adjust angle based on speed
+        particle[0] += particle[3]
 
         # Calculate particle's position based on pulsing radius
-        x = CENTER_X + pulse_radius * math.cos(particle[0])
-        y = CENTER_Y + pulse_radius * math.sin(particle[0])
+        x = CENTER_X + (pulse_radius + random.uniform(-5, 5)) * math.cos(particle[0])
+        y = CENTER_Y + (pulse_radius + random.uniform(-5, 5)) * math.sin(particle[0])
 
-        # Draw the smooth particle on top of the existing screen content
+        # Draw the smooth particle
         draw_smooth_particle(screen, PARTICLE_COLOR, (int(x), int(y)), particle[2])
+
+    # Clear the surface by drawing a transparent rectangle (erases old frames without a visible background)
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 10))  # Slight opacity to "fade" previous particles
+    screen.blit(overlay, (0, 0))
 
 # Main loop
 def main():
